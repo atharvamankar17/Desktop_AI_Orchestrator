@@ -1,0 +1,15 @@
+pyautogui
+pygetwindow
+pywin32
+keyboard
+mouse
+screen-brightness-control
+psutil
+requests
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+httpx
+python-dateutil
+pyperclip
