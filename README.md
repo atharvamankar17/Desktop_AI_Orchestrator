@@ -2,31 +2,29 @@
 
 ## 1. Overview
 
-Desktop AI Orchestrator is a Regex + LLM powered desktop automation system that enables natural language control over operating system tasks, desktop applications, web services, and system workflows.
+Desktop AI Orchestrator is a Regex + Local LLM powered desktop automation system that enables natural language control over operating system tasks, desktop applications, web services, and structured workflows.
 
 The system combines:
 
 * Regex-based command validation and intent routing
-* LLM-based conversational reasoning
+* Local LLM-based reasoning (Ollama)
 * OS-level automation using PyAutoGUI and window management
 * API integrations (GitHub, Email, Weather)
-* Web automation for YouTube, Spotify, Google, Discord, Instagram, and more
+* Web automation for YouTube, Spotify, Google, Discord, and Instagram
 
-It acts as a lightweight personal automation engine capable of translating natural language commands into deterministic system actions.
+It acts as a structured personal automation engine that translates natural language commands into deterministic system actions.
 
 ---
 
 ## 2. Core Architecture
 
-The application follows a modular architecture:
-
 User Input → Conversation Engine → Regex Validation → Intent Router → App/OS Handlers → Automation Execution
 
-Key design principles:
+Design principles:
 
 * Deterministic execution layer (Regex + predefined handlers)
-* LLM-assisted reasoning for flexible command interpretation
-* Strict validation of user input to prevent unsafe execution
+* Local LLM-assisted reasoning
+* Strict validation of user input
 * Modular separation of concerns
 
 ---
@@ -35,7 +33,7 @@ Key design principles:
 
 ### 3.1 Operating System Automation
 
-* Open and switch between applications
+* Open and switch applications
 * Detect active application
 * File Explorer search automation
 * Microsoft Store search
@@ -54,38 +52,28 @@ Supports automation workflows for:
 
 ### 3.3 Web Search
 
-Supports site-specific searches:
-
-* Google
-* YouTube
-* Spotify
-* Discord
-* Instagram
+* Google search
+* YouTube search
+* Spotify search
+* Instagram lookup
+* Discord navigation
 
 ### 3.4 GitHub Integration
 
 * Search repositories using GitHub API
-* Uses Personal Access Token (optional but recommended)
+* Supports Personal Access Token for higher rate limits
 
 ### 3.5 Email Integration
 
 * Send emails via configured Google credentials
-* Automatic typo correction for common domain mistakes
+* Automatic typo correction for domains
 
 ### 3.6 Local LLM Integration
 
-The system uses a fully local LLM via Ollama.
-
-* No cloud-based AI APIs are required.
-* No external AI calls are made.
-* All reasoning and content generation happens locally.
-
-This ensures:
-
-* Privacy
-* Offline capability (after model download)
+* Fully local inference using Ollama
+* No cloud-based AI usage
+* Offline capable after model download
 * No API costs
-* Full control over model selection
 
 ---
 
@@ -96,15 +84,15 @@ Desktop_AI_Orchestrator/
 │
 ├── app_functionality.py      # Core automation handlers
 ├── os_operations.py          # OS-level app detection & switching
-├── regex_validation.py       # Input validation & safe file path handling
+├── regex_validation.py       # Input validation & sanitization
 ├── google_services.py        # Email service integration
-├── notepad_operations.py     # Notepad-specific automation
-├── signals.py                # Event signaling & communication logic
-├── conversation.py           # LLM interaction & conversation memory
+├── notepad_operations.py     # Notepad automation
+├── signals.py                # Event signaling logic
+├── conversation.py           # Local LLM interaction & memory
 ├── config_manager.py         # Configuration loader
-├── config.json               # API & model configuration
-├── ui.py                     # Application UI layer
-└── requirements.txt          # Python dependencies
+├── config.json               # App configuration
+├── ui.py                     # Application UI
+└── requirements.txt          # Dependencies
 ```
 
 ---
@@ -114,25 +102,23 @@ Desktop_AI_Orchestrator/
 ### 5.1 Prerequisites
 
 * Python 3.9+
-* Windows OS (primary support due to PyAutoGUI & window automation)
-* Internet connection for API integrations
+* Windows OS (primary support)
+* Internet connection (only for initial Ollama model pull)
 
 ### 5.2 Clone the Repository
 
-```
+```bash
 git clone https://github.com/atharvamankar17/Desktop_AI_Orchestrator.git
 cd Desktop_AI_Orchestrator
 ```
 
 ### 5.3 Create a Virtual Environment (Recommended)
 
-It is strongly recommended to create a dedicated virtual environment to isolate project dependencies.
-
 On Windows:
 
 ```bash
 python -m venv venv
-venv\\Scripts\\activate
+venv\Scripts\activate
 ```
 
 On macOS / Linux:
@@ -142,379 +128,309 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-Once activated, your terminal should display the virtual environment name.
-
----
-
-### 5.4 Install Project Requirements
-
-After activating the virtual environment, install all required dependencies:
+### 5.4 Install Requirements
 
 ```bash
 pip install -r requirements.txt
 ```
 
-This installs all automation, window management, API, and local LLM dependencies required by the application.
-
-```
-
 ---
 
-## 6. Configuration Setup
+## 6. Local LLM Setup (Ollama)
 
-All configuration is managed via config.json.
+Install Ollama and pull a model:
 
-### 6.1 GitHub Token (Optional but Recommended)
-
-1. Generate a GitHub Personal Access Token
-2. Open config.json
-3. Replace:
-
-```
-
-"your_github_personal_access_token"
-
-```
-
-with your token.
-
-### 6.2 Local LLM Configuration (Ollama)
-
-Install Ollama from the official website and ensure it is running locally.
-
-Pull the required model:
-
-```
-
+```bash
 ollama pull phi3
-
 ```
 
-Start the Ollama server (if not auto-started):
+Ensure Ollama is running locally.
+
+Update config.json if required:
 
 ```
-
-ollama run phi3
-
-```
-
-Update config.json if needed:
-
-```
-
 "ollama": {
-"url": "[http://localhost:11434](http://localhost:11434)",
-"model": "phi3"
+    "url": "http://localhost:11434",
+    "model": "phi3"
 }
-
-```
-
-The application will automatically connect to the local Ollama server.
-
----
-
-### 6.3 AI_API Section (Disabled by Default)
-
-The AI_API section exists in config.json for legacy compatibility but is not required.
-
-You may leave it unchanged. The system operates entirely using the local Ollama model.
-
---- (Local LLM)
-
-Ensure Ollama is running locally:
-
-```
-
-ollama run phi3
-
-```
-
-Update config.json if needed:
-
-```
-
-"ollama": {
-"url": "[http://localhost:11434](http://localhost:11434)",
-"model": "phi3"
-}
-
 ```
 
 ---
 
-## 7. How to Run the Application
+## 7. Running the Application
 
-```
-
+```bash
 python ui.py
-
 ```
 
-The UI will launch and accept natural language commands.
+---
+
+## 8. Complete Feature Command Reference
+
+This section provides an exhaustive mapping of supported natural language commands across all implemented modules. Commands are flexible in phrasing, but examples below represent validated formats.
 
 ---
 
-## 8. Example Commands
+### 8.1 Application Launch & Window Management
 
-Below is a comprehensive list of supported natural language commands grouped by feature category.
+Open Applications:
 
-The system supports flexible phrasing, but examples below demonstrate the intended structure.
+* Open Notepad
+* Open Spotify
+* Open Discord
+* Open VSCode
+* Open File Explorer
+* Open Microsoft Store
+* Open Chrome
 
----
+Switch / Focus Applications:
 
-### 8.1 Application Launch & Switching
-
-- "Open Notepad"
-- "Open Spotify"
-- "Open VSCode"
-- "Open Discord"
-- "Open File Explorer"
-- "Switch to Spotify"
-- "Open Microsoft Store"
-
-The system attempts to detect installed executables or fallback to web versions where applicable.
-
----
-
-### 8.2 Notepad Content Generation
-
-Generate and write structured content directly into Notepad.
-
-- "Write a poem in notepad"
-- "Generate a motivational quote in notepad"
-- "Write a to-do list in notepad"
-- "Write a resignation letter in notepad"
-- "Write code for Fibonacci series in C language in notepad"
-- "Write code for bubble sort in Python in notepad"
-- "Generate HTML for a login page in notepad"
-
-The LLM generates content and the automation layer types it into Notepad.
+* Switch to Spotify
+* Bring Discord to front
+* Focus on VSCode
+* What application is currently active?
 
 ---
 
-### 8.3 Volume & Brightness Control
+### 8.2 Notepad Automation (LLM + Typing Engine)
 
-- "Set volume to 50%"
-- "Set volume to 0%"
-- "Set brightness to 70%"
-- "Set brightness to 30%"
+Content Generation:
 
-Supports values from 0–100.
+* Write a poem in notepad
+* Write a motivational speech in notepad
+* Write a resignation letter in notepad
+* Generate meeting notes in notepad
+
+Code Generation:
+
+* Write Fibonacci series in Python in notepad
+* Write bubble sort in C++ in notepad
+* Generate HTML login page in notepad
+* Write SQL query to fetch all users in notepad
+
+Structured Lists:
+
+* Create a to-do list in notepad
+* Create shopping list in notepad
 
 ---
 
-### 8.4 Web Search & Media Search
+### 8.3 System Controls
 
-General Web Search:
+Volume Control:
 
-- "Search artificial intelligence on Google"
-- "Search latest AI research"
+* Set volume to 50%
+* Increase volume to 80%
+* Mute system volume
+
+Brightness Control:
+
+* Set brightness to 70%
+* Decrease brightness to 40%
+
+---
+
+### 8.4 Web & Media Search
+
+Google Search:
+
+* Search artificial intelligence on Google
+* Search latest machine learning research
 
 YouTube:
 
-- "Search machine learning tutorials on YouTube"
-- "Play lo-fi music on YouTube"
+* Search machine learning tutorials on YouTube
+* Play lo-fi music on YouTube
+* Search coding interviews on YouTube
 
-Spotify:
+Spotify (Search & Play):
 
-- "Search Arijit Singh on Spotify"
-- "Play Shape of You on Spotify"
-
-Instagram & Discord (Web/Open App Context):
-
-- "Search user on Instagram"
-- "Open Discord"
+* Search Arijit Singh on Spotify
+* Play Shape of You on Spotify
+* Play Believer on Spotify
 
 ---
 
-### 8.5 Spotify Automation (Desktop)
+### 8.5 Spotify Desktop Controls
 
-- "Play Believer on Spotify"
-- "Pause Spotify"
-- "Next song on Spotify"
-- "Volume up in Spotify"
-
----
-
-### 8.6 Discord & Instagram Messaging
-
-Discord:
-
-- "Send message to username on Discord"
-- "Send message to username; Hello there"
-
-Instagram:
-
-- "Send message to username on Instagram"
+* Pause Spotify
+* Resume Spotify
+* Next song on Spotify
+* Previous song on Spotify
+* Increase Spotify volume
+* Decrease Spotify volume
 
 ---
 
-### 8.7 File Explorer Automation
+### 8.6 Discord Automation
 
-- "Search project report in File Explorer"
-- "Search budget.xlsx in File Explorer"
-- "Search notes in filemanager"
+Open / Navigate:
 
----
+* Open Discord
+* Switch to Discord
 
-### 8.8 Microsoft Store Search
+Messaging:
 
-- "Search Python in store"
-- "Search VSCode in Microsoft Store"
-
----
-
-### 8.9 GitHub Repository Search
-
-Requires GitHub token (optional for higher rate limits).
-
-- "Search repositories for desktop automation"
-- "Search repositories for machine learning"
-- "Search GitHub for regex projects"
-
-Returns top repositories with description and star count.
+* Send message to username on Discord; Hello there
+* Send message to John on Discord; Meeting at 5 PM
 
 ---
 
-### 8.10 Email Automation
+### 8.7 Instagram Automation (Web-Based)
 
-Direct Send:
-
-- "Send email to example@gmail.com; Meeting Update; The meeting is rescheduled to 5 PM"
-
-Generated Email:
-
-- "Send a formal email to professor@gmail.com about internship request"
-- "Send an informal email to friend@gmail.com about trip plans"
-
-The LLM generates subject and body automatically when requested.
+* Open Instagram
+* Send message to username on Instagram; Hi there
+* Message Rahul on Instagram; Are you coming today?
 
 ---
 
-### 8.11 Calendar Commands
+### 8.8 File Explorer Automation
+
+Search Files:
+
+* Search project report in File Explorer
+* Search budget.xlsx in File Explorer
+* Find presentation.pptx in explorer
+* Search notes in file manager
+
+---
+
+### 8.9 Microsoft Store Automation
+
+* Search Python in Microsoft Store
+* Search VSCode in store
+* Find Spotify in Microsoft Store
+
+---
+
+### 8.10 GitHub Repository Search
+
+* Search repositories for desktop automation
+* Search repositories for machine learning
+* Search GitHub for regex projects
+* Find top repositories for OS automation
+
+Returns repository name, description, and star count.
+
+---
+
+### 8.11 Email Automation
+
+Direct Email (Manual Subject & Body):
+
+* Send email to [example@gmail.com](mailto:example@gmail.com); Meeting Update; The meeting is rescheduled to 5 PM
+
+LLM-Generated Email:
+
+* Send a formal email to [professor@gmail.com](mailto:professor@gmail.com) about internship request
+* Send an informal email to [friend@gmail.com](mailto:friend@gmail.com) about trip plans
+* Draft a professional email to [HR@gmail.com](mailto:HR@gmail.com) about job application
+
+---
+
+### 8.12 Calendar Management
 
 View Events:
 
-- "Show events for today"
-- "Show events for 08/15/2025"
-- "List events on 12/25/2025"
+* Show events for today
+* Show events for 2025-08-20
+* List events on 12/25/2025
 
 Create Event:
 
-- "Create event Project Review on 2025-08-20 14:00"
+* Create event Project Review on 2025-08-20 14:00
+* Schedule meeting Team Sync on 2025-09-01 10:30
 
 Update Event:
 
-- "Update event Meeting to 2025-08-21 16:00"
+* Update event Project Review to 2025-08-21 16:00
 
 Delete Event:
 
-- "Delete event Team Sync"
+* Delete event Team Sync
+* Remove event Project Review
 
 ---
 
-### 8.12 Task Management
+### 8.13 Task Management
 
-List Tasks:
+View Tasks:
 
-- "Show all tasks"
-- "List tasks"
+* Show all tasks
+* List tasks
 
 Create Task:
 
-- "Create task Finish report"
-- "Add task Submit assignment due 2025-08-15"
+* Create task Finish report
+* Add task Submit assignment due 2025-08-15
 
 Update Task:
 
-- "Update task Finish report to Completed"
+* Update task Finish report to Completed
+* Mark task Submit assignment as Done
 
 Delete Task:
 
-- "Delete task Submit assignment"
+* Delete task Submit assignment
+* Remove task Finish report
 
 ---
 
-### 8.13 Weather Lookup
+### 8.14 Weather Lookup
 
-- "Get weather in Pune"
-- "Weather in Mumbai"
-
----
-
-### 8.14 Conversational Queries
-
-The system can also respond conversationally when no automation intent is detected:
-
-- "Explain what machine learning is"
-- "What is recursion?"
-- "How does the internet work?"
-
-In conversational mode, it returns concise plain text responses.
+* Get weather in Pune
+* Weather in Mumbai
+* Show weather for Delhi
 
 ---
 
-### 8.15 Mixed Natural Language Examples
+### 8.15 VSCode Automation
 
-- "Open notepad and write a short story about AI in notepad"
-- "Search Python automation tutorials on YouTube"
-- "Set brightness to 60% and volume to 40%"
-- "Create task Prepare presentation due 2025-09-01"
+* Create new file in VSCode
+* Save current file in VSCode
+* Format document in VSCode
+* Close file in VSCode
 
 ---
 
+### 8.16 Multi-Intent Commands
+
+If chaining is supported, examples include:
+
+* Open Notepad and write a short story about AI
+* Set brightness to 60% and volume to 40%
+* Open Spotify and play Believer
+
+---
+
+### 8.17 Conversational Mode (Fallback)
+
+When no automation intent is detected, the system responds conversationally:
+
+* Explain recursion
+* What is machine learning?
+* How does the internet work?
+
+---
 
 ## 9. Safety & Validation
 
-The system uses:
+Safety & Validation
 
-- Regex-based input validation
-- Sanitization for file paths
-- Query filtering to block newline or command injection
-- Controlled hotkey execution
-
-Fail-safe is re-enabled after every automation block.
+* Regex-based input validation
+* Sanitized file paths
+* Injection prevention
+* Controlled hotkey execution
 
 ---
 
 ## 10. Technical Stack
 
-- Python
-- PyAutoGUI
-- Requests
-- Webbrowser
-- PyGetWindow
-- Ollama (Local LLM)
-
----
-
-## 11. Design Philosophy
-
-Desktop AI Orchestrator is built around hybrid intelligence:
-
-Regex ensures deterministic safety.
-LLMs provide flexible reasoning.
-Automation layer executes with precision.
-
-This separation ensures both safety and adaptability.
-
----
-
-## 12. Known Limitations
-
-- Primarily optimized for Windows
-- UI automation depends on window focus
-- Web page layout changes may affect automation
-- Requires API keys for full functionality
-
----
-
-## 13. Future Improvements
-
-- Cross-platform support (Linux/macOS)
-- Plugin system for new applications
-- Voice interface integration
-- Task scheduling engine
-- Advanced permission sandboxing
+* Python
+* PyAutoGUI
+* Requests
+* Webbrowser
+* PyGetWindow
+* Ollama (Local LLM)
 
 ---
